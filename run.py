@@ -1,3 +1,3 @@
-from sample import scraper
+from sample import yahoo_scraper
 
-print(scraper.get_data('TSLA'))
+print(yahoo_scraper.get_data('TSLA'))
