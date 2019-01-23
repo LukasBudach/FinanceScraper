@@ -4,16 +4,19 @@ from ..util import circular_buffer
 
 
 class YahooScraper:
-    def __init__(self, buffer_size):
+    def __init__(self, buffer_size, holding_time):
         self.session = requests.Session()
         self.url = 'https://finance.yahoo.com/quote/'
         self.session.get('https://finance.yahoo.com')
 
-        # add dictionary to internal buffer to reduce load times on repeated requests
-        self.buffer = circular_buffer.CircularBuffer(buffer_size)
+        # add internal buffer to reduce load times on rapid, repeated requests
+        self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
 
     def set_buffer_size(self, size):
         self.buffer.set_size(size)
+
+    def set_holding_time(self, holding_time):
+        self.buffer.set_holding_time(holding_time)
 
     def get_data(self, ticker):
         data_object = self.buffer.get(ticker)

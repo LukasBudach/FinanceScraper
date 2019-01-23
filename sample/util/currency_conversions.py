@@ -20,7 +20,7 @@ def _get_exchange_rate(base_curr, dest_curr):
         rate = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']['price']['regularMarketPrice']['raw']
     except KeyError:
         print("[WARN] No valid conversion data found for " + base_curr + " to " + dest_curr +
-                        ". Using 1:1 conversion.")
+              ". Using 1:1 conversion.")
 
     return rate
 
@@ -33,5 +33,5 @@ def to_usd(amount, base_currency_symbol):
     # expandable for a lot of different currencies
     else:
         print("[WARN] Requested conversion from unknown currency symbol " + base_currency_symbol +
-                        " to USD. Using 1:1 conversion.")
+              " to USD. Using 1:1 conversion.")
     return amount
