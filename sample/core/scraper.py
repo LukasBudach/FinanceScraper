@@ -1,108 +1,91 @@
 import requests
 import json
+from ..util import circular_buffer
 
 
 class YahooScraper:
-    def __init__(self):
+    def __init__(self, buffer_size):
         self.session = requests.Session()
         self.url = 'https://finance.yahoo.com/quote/'
         self.session.get('https://finance.yahoo.com')
 
+        # add dictionary to internal buffer to reduce load times on repeated requests
+        self.buffer = circular_buffer.CircularBuffer(buffer_size)
+
+    def set_buffer_size(self, size):
+        self.buffer.set_size(size)
+
     def get_data(self, ticker):
-        return _format_data(self.session.get(self.url + ticker))
+        data_object = self.buffer.get(ticker)
+        if data_object is None:
+            res = self.session.get(self.url + ticker)
+            if not (res.status_code == requests.codes.ok):
+                print('[ERR] data fetching failed')
+                return None
 
+            raw_data = res.text
 
-def _format_data(raw, source, ticker):
-    if not (raw.status_code == requests.codes.ok):
-        print('[ERR] data fetching failed')
-        return
+            object_start = raw_data.find("root.App.main") + 16
+            object_end = raw_data.find("</script>", object_start) - 12
+            data_json = raw_data[object_start: object_end]
 
-    bulk_data = raw.text
+            data_object = json.loads(data_json)
 
-    object_start = bulk_data.find("root.App.main") + 16
-    object_end = bulk_data.find("</script>", object_start) - 12
+            self.buffer.add(ticker, data_object)
+        else:
+            self.buffer.refresh(ticker)
 
-    data = bulk_data[object_start: object_end]
+        data = {}
 
-    data_object = json.loads(data)
+        try:
+            quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
+            data['Source'] = 'Yahoo'
+            data['Price'] = quote_summary['financialData']['currentPrice']['raw']
+            data['Currency'] = quote_summary['price']['currency']
+            data['Security Name'] = quote_summary['price']['longName']
+            data['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
+            data['Valid'] = True
+        except KeyError:
+            print("[WARN] No valid data found for " + ticker)
 
-    data_dict = {}
+        return data
 
-    try:
-        quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-        data_dict['Source'] = 'Yahoo'
-        data_dict['Price'] = quote_summary['financialData']['currentPrice']['raw']
-        data_dict['Currency'] = quote_summary['price']['currency']
-        data_dict['Security Name'] = quote_summary['price']['longName']
-        data_dict['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
-        data_dict['Valid'] = True;
-    except KeyError:
-        print("[WARN] No valid data found for " + ticker)
+    def get_company_data(self, ticker):
+        data_object = self.buffer.get(ticker)
+        if data_object is None:
+            res = self.session.get(self.url + ticker)
+            if not (res.status_code == requests.codes.ok):
+                print('[ERR] data fetching failed')
+                return None
 
-    return data_dict
+            raw_data = res.text
 
+            object_start = raw_data.find("root.App.main") + 16
+            object_end = raw_data.find("</script>", object_start) - 12
+            data_json = raw_data[object_start: object_end]
 
-def _get_data_from_yahoo(ticker):
-    data = None
+            data_object = json.loads(data_json)
 
-    req = requests.get("https://finance.yahoo.com/quote/" + ticker)
-    html_bytes = req.text()
+            self.buffer.add(ticker, data_object)
+        else:
+            self.buffer.refresh(ticker)
 
-    html_string = html_bytes.decode("utf8")
-    req.close()
+        data = {'company': {'symbol': ticker}}
 
-    object_start = html_string.find("root.App.main") + 16
-    object_end = html_string.find("</script>", object_start) - 12
+        try:
+            quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
+            company = data['company']
+            company['companyName'] = quote_summary['price']['longName']
+            company['exchange'] = quote_summary['price']['exchangeName']
+            company['industry'] = quote_summary['summaryProfile']['industry']
+            company['website'] = quote_summary['summaryProfile']['website']
+            company['description'] = quote_summary['summaryProfile']['longBusinessSummary']
+            company['CEO'] = ''
+            company['issueType'] = ''
+            company['sector'] = quote_summary['summaryProfile']['sector']
+            company['tags'] = []
+        except KeyError:
+            data = None
+            print("[WARN] No valid company data found for " + ticker)
 
-    html_string_cut = html_string[object_start: object_end]
-
-    data_object = json.loads(html_string_cut)
-
-    data_dict = { }
-
-    try:
-        quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-        data_dict['Source'] = 'Yahoo'
-        data_dict['Price'] = quote_summary['financialData']['currentPrice']['raw']
-        data_dict['Currency'] = quote_summary['price']['currency']
-        data_dict['Security Name'] = quote_summary['price']['longName']
-        data_dict['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
-        data_dict['Valid'] = True;
-    except KeyError:
-        print("[WARN] No valid data found for " + ticker)
-
-    return data_dict
-
-
-def _get_company_from_yahoo(ticker):
-    req =requests.get("https://finance.yahoo.com/quote/" + ticker)
-    html_bytes = req.text()
-
-    html_string = html_bytes.decode("utf8")
-    req.close()
-
-    object_start = html_string.find("root.App.main") + 16
-    object_end = html_string.find("</script>", object_start) - 12
-
-    html_string_cut = html_string[object_start: object_end]
-
-    data_object = json.loads(html_string_cut)
-    data = {'company': {'symbol': ticker}}
-
-    try:
-        quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-        company = data['company']
-        company['companyName'] = quote_summary['price']['longName']
-        company['exchange'] = quote_summary['price']['exchangeName']
-        company['industry'] = quote_summary['summaryProfile']['industry']
-        company['website'] = quote_summary['summaryProfile']['website']
-        company['description'] = quote_summary['summaryProfile']['longBusinessSummary']
-        company['CEO'] = ''
-        company['issueType'] = ''
-        company['sector'] = quote_summary['summaryProfile']['sector']
-        company['tags'] = []
-    except KeyError:
-        data = None
-        print("[WARN] No valid company data found for " + ticker)
-
-    return data
+        return data
