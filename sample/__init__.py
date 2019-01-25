@@ -1,2 +1,2 @@
 from .core import scraper
-from .util import currency_conversions
+from .util import conversions

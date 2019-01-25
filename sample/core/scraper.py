@@ -4,22 +4,31 @@ from ..util import circular_buffer
 
 
 class YahooScraper:
-    def __init__(self, buffer_size=3, holding_time=15):
+    def __init__(self, use_buffer=True, buffer_size=3, holding_time=15):
         self.session = requests.Session()
         self.url = 'https://finance.yahoo.com/quote/'
         self.session.get('https://finance.yahoo.com')
 
-        # add internal buffer to reduce load times on rapid, repeated requests
-        self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
+        self.use_buffer = use_buffer
+
+        if use_buffer:
+            # add internal buffer to reduce load times on rapid, repeated requests
+            self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
 
     def set_buffer_size(self, size):
-        self.buffer.set_size(size)
+        if self.use_buffer:
+            self.buffer.set_size(size)
 
     def set_holding_time(self, holding_time):
-        self.buffer.set_holding_time(holding_time)
+        if self.use_buffer:
+            self.buffer.set_holding_time(holding_time)
 
     def get_data(self, ticker):
-        data_object = self.buffer.get(ticker)
+        if self.use_buffer:
+            data_object = self.buffer.get(ticker)
+        else:
+            data_object = None
+
         if data_object is None:
             res = self.session.get(self.url + ticker)
             if not (res.status_code == requests.codes.ok):
@@ -34,9 +43,11 @@ class YahooScraper:
 
             data_object = json.loads(data_json)
 
-            self.buffer.add(ticker, data_object)
+            if self.use_buffer:
+                self.buffer.add(ticker, data_object)
         else:
-            self.buffer.refresh(ticker)
+            if self.use_buffer:
+                self.buffer.refresh(ticker)
 
         data = {}
 
@@ -54,7 +65,11 @@ class YahooScraper:
         return data
 
     def get_company_data(self, ticker):
-        data_object = self.buffer.get(ticker)
+        if self.use_buffer:
+            data_object = self.buffer.get(ticker)
+        else:
+            data_object = None
+
         if data_object is None:
             res = self.session.get(self.url + ticker)
             if not (res.status_code == requests.codes.ok):
@@ -68,10 +83,11 @@ class YahooScraper:
             data_json = raw_data[object_start: object_end]
 
             data_object = json.loads(data_json)
-
-            self.buffer.add(ticker, data_object)
+            if self.use_buffer:
+                self.buffer.add(ticker, data_object)
         else:
-            self.buffer.refresh(ticker)
+            if self.use_buffer:
+                self.buffer.refresh(ticker)
 
         data = {'company': {'symbol': ticker}}
 
