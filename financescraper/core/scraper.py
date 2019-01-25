@@ -15,6 +15,9 @@ class YahooScraper:
             # add internal buffer to reduce load times on rapid, repeated requests
             self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
 
+    def close_connection(self):
+        self.session.close()
+
     def set_buffer_size(self, size):
         if self.use_buffer:
             self.buffer.set_size(size)
