@@ -4,7 +4,7 @@ from ..util import circular_buffer
 
 
 class YahooScraper:
-    def __init__(self, buffer_size, holding_time):
+    def __init__(self, buffer_size=3, holding_time=15):
         self.session = requests.Session()
         self.url = 'https://finance.yahoo.com/quote/'
         self.session.get('https://finance.yahoo.com')
