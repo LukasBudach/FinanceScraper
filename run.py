@@ -1,11 +1,11 @@
-import sample
+import finance_scraper
 
 ticker = ['TSLA', 'AAPL', 'TSLA', 'AMZN', 'GOOG', 'AAPL', 'TSLA', 'FZM.F', '7974.T', 'AAPL']
 currencies = ['USD', 'EUR', 'GBP', 'JPY']
 
-dollar_converter = sample.conversions.CurrencyConverter('USD')
-euro_converter = sample.conversions.CurrencyConverter('EUR')
-yahoo_scraper = sample.scraper.YahooScraper()
+dollar_converter = finance_scraper.conversions.CurrencyConverter('USD')
+euro_converter = finance_scraper.conversions.CurrencyConverter('EUR')
+yahoo_scraper = finance_scraper.scraper.YahooScraper()
 
 for t in ticker:
     print(yahoo_scraper.get_data(t))
