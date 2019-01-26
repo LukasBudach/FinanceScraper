@@ -15,14 +15,17 @@ class CurrencyConverter:
             # add internal buffer to reduce load times on rapid, repeated requests
             self.buffer = CircularBuffer(buffer_size, holding_time)
 
+    # sets the number of currency to conversion ratio pairs that can be saved in the internal buffer
     def set_buffer_size(self, size):
         if self.use_buffer:
             self.buffer.set_size(size)
 
+    # sets the maximum duration in seconds for which values are allowed to be held in the buffer
     def set_holding_time(self, holding_time):
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
 
+    # converts the amount from its base currency to the target currency defined during initialization
     def convert(self, base_currency_code, amount):
         exchange_rate = self._get_exchange_rate(base_currency_code, self.target_currency_code)
         if exchange_rate is None:
@@ -30,6 +33,7 @@ class CurrencyConverter:
         else:
             return amount * exchange_rate
 
+    # internal function fetching the exchange rate from base to target currency and saving it to the internal buffer
     def _get_exchange_rate(self, base_curr, dest_curr):
         if self.use_buffer:
             rate = self.buffer.get(base_curr)

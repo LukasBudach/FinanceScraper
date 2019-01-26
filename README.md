@@ -56,7 +56,7 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* [ ] add tests for the existing functionality
+* [x] add tests for the existing functionality
 * [x] write a useful README
 * [ ] write a simple documentation for the current functionality
 
