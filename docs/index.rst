@@ -10,6 +10,7 @@ Welcome to FinanceScraper's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   install
 
 
 Indices and tables
