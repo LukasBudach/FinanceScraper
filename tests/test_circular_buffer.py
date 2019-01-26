@@ -1,5 +1,6 @@
 import unittest
 import time
+import logging
 
 from financescraper.util import circular_buffer
 
@@ -7,6 +8,10 @@ from financescraper.util import circular_buffer
 class TestCircularBuffer(unittest.TestCase):
     def setUp(self):
         self.buffer = circular_buffer.CircularBuffer(2, 1)
+        logging.disable(logging.ERROR)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
 
     def test_buffer_init(self):
         self.assertEqual(self.buffer.max_size, 2)

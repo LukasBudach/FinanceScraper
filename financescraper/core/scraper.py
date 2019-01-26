@@ -1,5 +1,7 @@
 import requests
 import json
+import logging
+
 from ..util import circular_buffer
 
 
@@ -15,6 +17,9 @@ class YahooScraper:
             # add internal buffer to reduce load times on rapid, repeated requests
             self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
 
+    def __del__(self):
+        self.close_connection()
+
     def close_connection(self):
         self.session.close()
 
@@ -26,6 +31,29 @@ class YahooScraper:
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
 
+    def _fetch_data(self, ticker):
+        res = self.session.get(self.url + ticker)
+        if not (res.status_code == requests.codes.ok):
+            logging.error('data fetching failed')
+            return None
+
+        raw_data = res.text
+
+        object_start = raw_data.find("root.App.main") + 16
+        object_end = raw_data.find("</script>", object_start) - 12
+        data_json = raw_data[object_start: object_end]
+
+        data_object = json.loads(data_json)
+
+        if self.use_buffer:
+            self.buffer.add(ticker, data_object)
+
+        else:
+            if self.use_buffer:
+                self.buffer.refresh(ticker)
+
+        return data_object
+
     def get_data(self, ticker):
         if self.use_buffer:
             data_object = self.buffer.get(ticker)
@@ -33,24 +61,10 @@ class YahooScraper:
             data_object = None
 
         if data_object is None:
-            res = self.session.get(self.url + ticker)
-            if not (res.status_code == requests.codes.ok):
-                print('[ERR] data fetching failed')
-                return None
+            data_object = self._fetch_data(ticker)
 
-            raw_data = res.text
-
-            object_start = raw_data.find("root.App.main") + 16
-            object_end = raw_data.find("</script>", object_start) - 12
-            data_json = raw_data[object_start: object_end]
-
-            data_object = json.loads(data_json)
-
-            if self.use_buffer:
-                self.buffer.add(ticker, data_object)
-        else:
-            if self.use_buffer:
-                self.buffer.refresh(ticker)
+        if data_object is None:
+            return None
 
         data = {}
 
@@ -63,7 +77,8 @@ class YahooScraper:
             data['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
             data['Valid'] = True
         except KeyError:
-            print("[WARN] No valid data found for " + ticker)
+            logging.warning("No valid data found for " + ticker)
+            return None
 
         return data
 
@@ -74,23 +89,10 @@ class YahooScraper:
             data_object = None
 
         if data_object is None:
-            res = self.session.get(self.url + ticker)
-            if not (res.status_code == requests.codes.ok):
-                print('[ERR] data fetching failed')
-                return None
+            data_object = self._fetch_data(ticker)
 
-            raw_data = res.text
-
-            object_start = raw_data.find("root.App.main") + 16
-            object_end = raw_data.find("</script>", object_start) - 12
-            data_json = raw_data[object_start: object_end]
-
-            data_object = json.loads(data_json)
-            if self.use_buffer:
-                self.buffer.add(ticker, data_object)
-        else:
-            if self.use_buffer:
-                self.buffer.refresh(ticker)
+        if data_object is None:
+            return None
 
         data = {'company': {'symbol': ticker}}
 
@@ -107,7 +109,7 @@ class YahooScraper:
             company['sector'] = quote_summary['summaryProfile']['sector']
             company['tags'] = []
         except KeyError:
-            data = None
-            print("[WARN] No valid company data found for " + ticker)
+            logging.warning("No valid company data found for " + ticker)
+            return None
 
         return data
