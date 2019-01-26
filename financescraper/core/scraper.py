@@ -31,29 +31,6 @@ class YahooScraper:
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
 
-    def _fetch_data(self, ticker):
-        res = self.session.get(self.url + ticker)
-        if not (res.status_code == requests.codes.ok):
-            logging.error('data fetching failed')
-            return None
-
-        raw_data = res.text
-
-        object_start = raw_data.find("root.App.main") + 16
-        object_end = raw_data.find("</script>", object_start) - 12
-        data_json = raw_data[object_start: object_end]
-
-        data_object = json.loads(data_json)
-
-        if self.use_buffer:
-            self.buffer.add(ticker, data_object)
-
-        else:
-            if self.use_buffer:
-                self.buffer.refresh(ticker)
-
-        return data_object
-
     def get_data(self, ticker):
         if self.use_buffer:
             data_object = self.buffer.get(ticker)
@@ -113,3 +90,26 @@ class YahooScraper:
             return None
 
         return data
+
+    def _fetch_data(self, ticker):
+        res = self.session.get(self.url + ticker)
+        if not (res.status_code == requests.codes.ok):
+            logging.error('data fetching failed')
+            return None
+
+        raw_data = res.text
+
+        object_start = raw_data.find("root.App.main") + 16
+        object_end = raw_data.find("</script>", object_start) - 12
+        data_json = raw_data[object_start: object_end]
+
+        data_object = json.loads(data_json)
+
+        if self.use_buffer:
+            self.buffer.add(ticker, data_object)
+
+        else:
+            if self.use_buffer:
+                self.buffer.refresh(ticker)
+
+        return data_object
