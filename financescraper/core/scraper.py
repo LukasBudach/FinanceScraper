@@ -7,6 +7,7 @@ from ..util import circular_buffer
 
 class YahooScraper:
     def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+        # open a requests session for more efficient access behavior
         self.session = requests.Session()
         self.url = 'https://finance.yahoo.com/quote/'
         self.session.get('https://finance.yahoo.com')
@@ -18,19 +19,24 @@ class YahooScraper:
             self.buffer = circular_buffer.CircularBuffer(buffer_size, holding_time)
 
     def __del__(self):
+        # make sure to close the session when a scraper is disposed of
         self.close_connection()
 
+    # closes the requests session held by the scraper !there is no way to re-open the session!
     def close_connection(self):
         self.session.close()
 
+    # sets the amount of stocks that will be buffered internally
     def set_buffer_size(self, size):
         if self.use_buffer:
             self.buffer.set_size(size)
 
+    # sets the time after which stocks need to be re-loaded in seconds
     def set_holding_time(self, holding_time):
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
 
+    # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):
         if self.use_buffer:
             data_object = self.buffer.get(ticker)
@@ -59,6 +65,7 @@ class YahooScraper:
 
         return data
 
+    # returns a dictionary containing all relevant company data associated with a ticker
     def get_company_data(self, ticker):
         if self.use_buffer:
             data_object = self.buffer.get(ticker)
@@ -91,6 +98,7 @@ class YahooScraper:
 
         return data
 
+    # internal function executing the html request for a given ticker
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker)
         if not (res.status_code == requests.codes.ok):
