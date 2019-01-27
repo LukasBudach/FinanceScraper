@@ -4,14 +4,15 @@
    contain the root `toctree` directive.
 
 Welcome to Finance Scraper's documentation!
-==========================================
+===========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    install
    quickstart
+   interface
 
 
 Indices and tables
