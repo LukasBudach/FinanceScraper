@@ -56,15 +56,19 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* [x] add tests for the existing functionality
-* [x] write a useful README
-* [x] write a simple documentation for the current functionality
+* next progress should lead to minor version
 
 ### Minor
-* [ ] write the documentation more in depth
-* [ ] make the documentation interactive
+* [x] write the documentation more in depth
+* [x] make the documentation interactive
 * [ ] add more example code to show the intended usage
+* [ ] rethink the interface in terms of the returned data
+    * [ ] implement objects that get returned instead of dictionaries
+    * [ ] update documentation considering the changes above
 
 ### Major
 * look into performance improvements
 * as this will be 1.x.x should be well documented and very usable
+
+### ToDo without any specific version goal
+* add intelligent error types
