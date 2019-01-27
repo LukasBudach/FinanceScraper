@@ -35,7 +35,6 @@ class TestYahooScraper(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertEqual(response['Source'], 'Yahoo')
         self.assertEqual(type(response['Price']), float)
-        self.assertTrue(response['Valid'])
 
         response = self.scraper.get_data(invalid_ticker)
         self.assertIsNone(response)
@@ -46,8 +45,8 @@ class TestYahooScraper(unittest.TestCase):
 
         response = self.scraper.get_company_data(valid_ticker)
         self.assertIsNotNone(response)
-        self.assertIsNotNone(response['company']['companyName'])
-        self.assertEqual(response['company']['symbol'], valid_ticker)
+        self.assertIsNotNone(response['Company Name'])
+        self.assertEqual(response['Symbol'], valid_ticker)
 
         response = self.scraper.get_company_data(invalid_ticker)
         self.assertIsNone(response)
