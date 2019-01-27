@@ -1,18 +1,18 @@
-from setuptools import setup
+import setuptools
 
 with open("README.md", "r") as fh:
 
     long_description = fh.read()
 
-setup(
+setuptools.setup(
     name='FinanceScraper',
-    version='0.1.2',
+    version='0.1.3',
     author='Lukas Budach',
     author_email='lukas.budach@student.hpi.de',
     description='An up-to-date web scraper providing financial data from various sources',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['financescraper', 'financescraper/core', 'financescraper/util'],
+    packages=setuptools.find_packages(),
     scripts=['bin/example.py'],
     url="https://github.com/LukasBudach/FinanceScraper",
     include_package_data=True,

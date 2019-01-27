@@ -10,3 +10,6 @@ v0.1.1, 01/27/2019
 
 v0.1.2 01/27/2019
     -- HOTFIX: pip distribution did not contain core and util packages
+
+v0.1.3 01/27/2019
+    -- use setuptools capabilities to find all necessary packages
