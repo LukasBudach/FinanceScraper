@@ -3,8 +3,8 @@ import financescraper
 ticker = ['TSLA', 'AAPL', 'TSLA', 'AMZN', 'GOOG', 'AAPL', 'TSLA', 'FZM.F', '7974.T', 'AAPL']
 currencies = ['USD', 'EUR', 'GBP', 'JPY', 'USD', 'EUR']
 
-dollar_converter = financescraper.conversions.CurrencyConverter('USD')
-euro_converter = financescraper.conversions.CurrencyConverter('EUR')
+dollar_converter = financescraper.core.conversions.CurrencyConverter('USD')
+euro_converter = financescraper.core.conversions.CurrencyConverter('EUR')
 yahoo_scraper = financescraper.scraper.YahooScraper()
 
 for t in ticker:

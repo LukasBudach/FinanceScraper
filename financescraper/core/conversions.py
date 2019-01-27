@@ -1,8 +1,8 @@
 import requests
 import json
 
-from ..core import scraper
-from .circular_buffer import CircularBuffer
+from financescraper.core import scraper
+from financescraper.datacontainer.circular_buffer import CircularBuffer
 
 
 class CurrencyConverter:

@@ -1,4 +1,4 @@
-from financescraper import conversions
+from financescraper.core import conversions
 
 usd_converter = conversions.CurrencyConverter('USD')
 print(usd_converter.convert('EUR', 100))

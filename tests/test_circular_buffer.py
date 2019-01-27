@@ -2,7 +2,7 @@ import unittest
 import time
 import logging
 
-from financescraper.util import circular_buffer
+from financescraper.datacontainer import circular_buffer
 
 
 class TestCircularBuffer(unittest.TestCase):

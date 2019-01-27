@@ -1,2 +1,2 @@
 from .core import scraper
-from .util import conversions
+from .core import conversions

@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 
-from ..util import circular_buffer
+from financescraper.datacontainer import circular_buffer
 
 
 class YahooScraper:
