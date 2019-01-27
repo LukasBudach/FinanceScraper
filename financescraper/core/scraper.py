@@ -53,12 +53,11 @@ class YahooScraper:
 
         try:
             quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-            data['Source'] = 'Yahoo'
-            data['Price'] = quote_summary['financialData']['currentPrice']['raw']
             data['Currency'] = quote_summary['price']['currency']
-            data['Security Name'] = quote_summary['price']['longName']
             data['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
-            data['Valid'] = True
+            data['Price'] = quote_summary['financialData']['currentPrice']['raw']
+            data['Security Name'] = quote_summary['price']['longName']
+            data['Source'] = 'Yahoo'
         except KeyError:
             logging.warning("No valid data found for " + ticker)
             return None
@@ -78,20 +77,17 @@ class YahooScraper:
         if data_object is None:
             return None
 
-        data = {'company': {'symbol': ticker}}
+        data = {}
 
         try:
             quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-            company = data['company']
-            company['companyName'] = quote_summary['price']['longName']
-            company['exchange'] = quote_summary['price']['exchangeName']
-            company['industry'] = quote_summary['summaryProfile']['industry']
-            company['website'] = quote_summary['summaryProfile']['website']
-            company['description'] = quote_summary['summaryProfile']['longBusinessSummary']
-            company['CEO'] = ''
-            company['issueType'] = ''
-            company['sector'] = quote_summary['summaryProfile']['sector']
-            company['tags'] = []
+            data['Company Name'] = quote_summary['price']['longName']
+            data['Description'] = quote_summary['summaryProfile']['longBusinessSummary']
+            data['Exchange'] = quote_summary['price']['exchangeName']
+            data['Industry'] = quote_summary['summaryProfile']['industry']
+            data['Sector'] = quote_summary['summaryProfile']['sector']
+            data['Symbol'] = ticker
+            data['Website'] = quote_summary['summaryProfile']['website']
         except KeyError:
             logging.warning("No valid company data found for " + ticker)
             return None
