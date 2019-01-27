@@ -58,7 +58,7 @@ next major, minor and micro versions.
 ### Micro
 * [x] add tests for the existing functionality
 * [x] write a useful README
-* [ ] write a simple documentation for the current functionality
+* [x] write a simple documentation for the current functionality
 
 ### Minor
 * [ ] write the documentation more in depth

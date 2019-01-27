@@ -1,1 +1,9 @@
-v0.1.0, 01/25/1019 -- Initial release.
+v0.1.0, 01/25/2019 -- Initial release.
+
+v0.1.1, 01/26/2019
+    -- add a proper README to the project
+    -- add a documentation to the project
+        - document project setup
+        - provide a quickstart guide
+        - show the interface in detail
+    -- add tests to ensure the project survives through refactorings
