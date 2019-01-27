@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'FinanceScraper'
+project = 'Finance Scraper'
 copyright = '2019, Lukas Budach'
 author = 'Lukas Budach'
 
@@ -101,7 +101,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'FinanceScraperdoc'
+htmlhelp_basename = 'Finance Scraperdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -128,7 +128,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'FinanceScraper.tex', 'FinanceScraper Documentation',
+    (master_doc, 'Finance Scraper.tex', 'Finance Scraper Documentation',
      'Lukas Budach', 'manual'),
 ]
 
@@ -138,7 +138,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'financescraper', 'FinanceScraper Documentation',
+    (master_doc, 'Finance Scraper', 'Finance Scraper Documentation',
      [author], 1)
 ]
 
@@ -149,8 +149,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'FinanceScraper', 'FinanceScraper Documentation',
-     author, 'FinanceScraper', 'One line description of project.',
+    (master_doc, 'Finance Scraper', 'Finance Scraper Documentation',
+     author, 'Finance Scraper', 'One line description of project.',
      'Miscellaneous'),
 ]
 

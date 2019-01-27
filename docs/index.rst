@@ -1,9 +1,9 @@
-.. FinanceScraper documentation master file, created by
+.. Finance Scraper documentation master file, created by
    sphinx-quickstart on Sat Jan 26 20:43:21 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to FinanceScraper's documentation!
+Welcome to Finance Scraper's documentation!
 ==========================================
 
 .. toctree::
@@ -11,6 +11,7 @@ Welcome to FinanceScraper's documentation!
    :caption: Contents:
 
    install
+   quickstart
 
 
 Indices and tables
@@ -34,11 +35,11 @@ symbols that yahoo finance can handle was generally not available. This is why
 I chose to further pursue this small side project of mine and *here we are!*
 
 
-**When to use FinanceScraper?**
+**When to use Finance Scraper?**
 
 Before I tell you when not to use this API of course I want to get you hooked
 on my project. This is why I'm going to give you a couple of great points on
-why you should use FinanceScraper for your next project!
+why you should use Finance Scraper for your next project!
 
 1. This API is maintained to stay up-to-date with the changes in its own data
 sources APIs. Over the last couple of years a lot of Python based finance data
@@ -57,7 +58,7 @@ if you don't want to pay for it. This is not the case for this project. You
 just get it and it's all yours to use.
 
 
-**When not to use FinanceScraper?**
+**When not to use Finance Scraper?**
 
 Of course it would be delusional to belive that this project is the perfect
 solution to any finance data fetching related issue. This is why I also want
