@@ -6,13 +6,13 @@ with open("README.md", "r") as fh:
 
 setup(
     name='FinanceScraper',
-    version='0.1.1',
+    version='0.1.2',
     author='Lukas Budach',
     author_email='lukas.budach@student.hpi.de',
     description='An up-to-date web scraper providing financial data from various sources',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['financescraper'],
+    packages=['financescraper', 'financescraper/core', 'financescraper/util'],
     scripts=['bin/example.py'],
     url="https://github.com/LukasBudach/FinanceScraper",
     include_package_data=True,
