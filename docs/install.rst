@@ -34,7 +34,7 @@ about cloning the repository containing this project.
 
 .. code-block:: Terminfo
 
-  git clone https://github.com/LukasBudach/Finance Scraper.git
+  git clone https://github.com/LukasBudach/FinanceScraper.git
 
 This way you can make your adaptions to the API and use your local version for
 your own project. If your project is growing bigger and you need to distribute
