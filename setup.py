@@ -13,7 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(),
-    scripts=['bin/example.py'],
+    scripts=['bin/full_example.py'],
     url="https://github.com/LukasBudach/FinanceScraper",
     include_package_data=True,
     install_requires=[

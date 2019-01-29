@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 
 from financescraper.core import scraper
 from financescraper.datacontainer.circular_buffer import CircularBuffer
@@ -43,7 +44,7 @@ class CurrencyConverter:
         if rate is None:
             res = self.yahoo_scraper.session.get(self.yahoo_scraper.url + base_curr + dest_curr + "=X")
             if not (res.status_code == requests.codes.ok):
-                print('[ERR] data fetching failed')
+                logging.error('Data fetching failed for conversion from ' + base_curr + ' to ' + dest_curr)
                 return None
 
             raw_data = res.text
@@ -58,7 +59,7 @@ class CurrencyConverter:
                 if self.use_buffer:
                     self.buffer.add(base_curr, rate)
             except KeyError:
-                print("[ERR] No valid conversion data found for " + base_curr + " to " + dest_curr)
+                logging.error("No valid conversion data found for " + base_curr + " to " + dest_curr)
         else:
             if self.use_buffer:
                 self.buffer.refresh(base_curr)

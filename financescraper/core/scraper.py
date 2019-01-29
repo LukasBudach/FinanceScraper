@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 
-from financescraper.datacontainer import circular_buffer
+from financescraper.datacontainer import circular_buffer, container
 
 
 class YahooScraper:
@@ -49,17 +49,16 @@ class YahooScraper:
         if data_object is None:
             return None
 
-        data = {}
+        data = container.TickerData('Yahoo')
 
         try:
             quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-            data['Currency'] = quote_summary['price']['currency']
-            data['ETF'] = (quote_summary['price']['quoteType'] == 'ETF')
-            data['Price'] = quote_summary['financialData']['currentPrice']['raw']
-            data['Security Name'] = quote_summary['price']['longName']
-            data['Source'] = 'Yahoo'
-        except KeyError:
-            logging.warning("No valid data found for " + ticker)
+            data.currency = quote_summary['price']['currency']
+            data.etf = (quote_summary['price']['quoteType'] == 'ETF')
+            data.name = quote_summary['price']['longName']
+            data.price = quote_summary['price']['regularMarketPrice']['raw']
+        except KeyError as e:
+            logging.warning("No valid data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
@@ -77,19 +76,19 @@ class YahooScraper:
         if data_object is None:
             return None
 
-        data = {}
+        data = container.CompanyData('Yahoo')
 
         try:
             quote_summary = data_object['context']['dispatcher']['stores']['QuoteSummaryStore']
-            data['Company Name'] = quote_summary['price']['longName']
-            data['Description'] = quote_summary['summaryProfile']['longBusinessSummary']
-            data['Exchange'] = quote_summary['price']['exchangeName']
-            data['Industry'] = quote_summary['summaryProfile']['industry']
-            data['Sector'] = quote_summary['summaryProfile']['sector']
-            data['Symbol'] = ticker
-            data['Website'] = quote_summary['summaryProfile']['website']
-        except KeyError:
-            logging.warning("No valid company data found for " + ticker)
+            data.description = quote_summary['summaryProfile']['longBusinessSummary']
+            data.exchange = quote_summary['price']['exchangeName']
+            data.industry = quote_summary['summaryProfile']['industry']
+            data.name = quote_summary['price']['longName']
+            data.sector = quote_summary['summaryProfile']['sector']
+            data.symbol = ticker
+            data.website = quote_summary['summaryProfile']['website']
+        except KeyError as e:
+            logging.warning("No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
@@ -98,7 +97,7 @@ class YahooScraper:
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker)
         if not (res.status_code == requests.codes.ok):
-            logging.error('data fetching failed')
+            logging.error('Data fetching failed for ' + ticker)
             return None
 
         raw_data = res.text
