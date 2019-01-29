@@ -1,5 +1,6 @@
 # Finance Scaper
 This project aims to provide an up-to-date data scraper for yahoo finance as a simple stock data API.
+For an in-depth view on the project check out its [documentation](https://financescraper.readthedocs.io/en/latest/).
 
 ## The purpose & why to use Finance Scraper
 There are a lot of APIs allowing you to pull stock/market data available for python. 
