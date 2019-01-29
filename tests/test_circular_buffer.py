@@ -30,7 +30,7 @@ class TestCircularBuffer(unittest.TestCase):
 
     def test_buffer_timestamp(self):
         self.buffer.add('A', 1)
-        self.assertAlmostEqual(self.buffer.timestamps['A'], time.time())
+        self.assertAlmostEqual(self.buffer.timestamps['A'], time.time(), 3)
 
     def test_buffer_add_element(self):
         obj = {
