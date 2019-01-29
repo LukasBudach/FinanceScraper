@@ -1,4 +1,4 @@
-# Finance Scaper
+# Finance Scaper [![Build Status](https://travis-ci.org/LukasBudach/FinanceScraper.svg?branch=master)](https://travis-ci.org/LukasBudach/FinanceScraper)
 This project aims to provide an up-to-date data scraper for yahoo finance as a simple stock data API.
 For an in-depth view on the project check out its [documentation](https://financescraper.readthedocs.io/en/latest/).
 
