@@ -65,7 +65,7 @@ next major, minor and micro versions.
 * [x] add more example code to show the intended usage
 * [x] rethink the interface in terms of the returned data
     * [x] implement objects that get returned instead of dictionaries
-    * [ ] update documentation considering the changes above
+    * [x] update documentation considering the changes above
 
 ### Major
 * look into performance improvements
