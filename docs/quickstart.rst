@@ -7,7 +7,7 @@ Make a Ticker request
 
 This is the main reason you are probably going to want to use this API for your
 own project. Finance Scraper is aimimg to provide multiple classes, one for
-access to a single of its own data sources. As of Version 0.1.0 there is only
+access to a single of its own data sources. As of version 0.2.0 there is only
 one source - yahoo finance.
 
 Due to this architecture you are going to need to get yourself a scraper object
@@ -15,7 +15,7 @@ to make your requests. This object will internally keep a Session_ open, so for
 request efficiency it is recommended to keep your scraper object as long as you
 are planning to make requests to a specific source.
 
-Here is an example of how you would create the YahooScraper object and use it to
+Here is an example of how you would create the :ref:`yahoo-scraper` object and use it to
 fetch data for a specific ticker:
 
 .. code-block:: Python
@@ -24,24 +24,8 @@ fetch data for a specific ticker:
   yahoo_scraper = scraper.YahooScraper()
   data = yahoo_scraper.get_data('AMZN')
 
-The *get_data(ticker)* method will return a dictionary if the data could be
-recovered for the ticker and **None** if not. The dictionary contains the
-following:
-
-+-----------------+-----------------------------------------------------------------+
-| Key             | Value                                                           |
-+=================+=================================================================+
-| Currency        | Currency code representing the currency of ticker's price (e.g. |
-|                 | USD, EUR)                                                       |
-+-----------------+-----------------------------------------------------------------+
-| ETF             | Boolean indicating if the ticker belongs to an ETF_             |
-+-----------------+-----------------------------------------------------------------+
-| Price           | Price of one share of the holding represented by the ticker     |
-+-----------------+-----------------------------------------------------------------+
-| Security Name   | Name of the holding represented by the ticker                   |
-+-----------------+-----------------------------------------------------------------+
-| Source          | String representation of the data source (e.g. Yahoo)           |
-+-----------------+-----------------------------------------------------------------+
+The *get_data(ticker)* method will return a TickerData object if the data could
+be recovered for the ticker and **None** if not.
 
 If you want to additionally get some more information on the holding/company
 behind your ticker, you can do so by fetching the company data like so:
@@ -52,27 +36,11 @@ behind your ticker, you can do so by fetching the company data like so:
   yahoo_scraper = scraper.YahooScraper()
   data = yahoo_scraper.get_company_data('AMZN')
 
-The *get_company_data(ticker)* method will return a dictionary if the data
-could be recovered for the ticker and **None** if not. The dictionary contains
-the following:
+The *get_company_data(ticker)* method will return a CompanyData object if the
+data could be recovered for the ticker and **None** if not.
 
-+-----------------+-----------------------------------------------------------------+
-| Key             | Value                                                           |
-+=================+=================================================================+
-| Company Name    | Name of the company represented by the ticker                   |
-+-----------------+-----------------------------------------------------------------+
-| Description     | Description of the company provided by the data source          |
-+-----------------+-----------------------------------------------------------------+
-| Exchange        | Name of the exchange the ticker gets traded on (e.g. NasdaqGS)  |
-+-----------------+-----------------------------------------------------------------+
-| Industry        | Industry the company is active in (e.g. Specialty Retail)       |
-+-----------------+-----------------------------------------------------------------+
-| Sector          | Sector the company is associated with (e.g. Consumer Cyclical)  |
-+-----------------+-----------------------------------------------------------------+
-| Symbol          | The ticker symbol                                               |
-+-----------------+-----------------------------------------------------------------+
-| Website         | Company website as provided by the data source                  |
-+-----------------+-----------------------------------------------------------------+
+For more information on the data object check out the section 
+:ref:`ret-data-objects` in the interface reference.
 
 Convert between currencies
 --------------------------

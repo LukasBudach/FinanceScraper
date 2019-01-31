@@ -21,62 +21,70 @@ Currently the following finance scraper classes are provided:
 :YahooScraper:
     provides data from finance.yahoo.com
 
-Return Dictionaries
-+++++++++++++++++++
+.. _ret-data-objects:
 
-Every time any data related to a ticker is requested by the user the raw data
-is composed into a dictionary that then is returned. The following paragraph
-seeks to define those dictionaries returned for access to the data by the APIs
-user.
+Returned Data Objects
++++++++++++++++++++++
 
-- **Ticker Data**
-    This dictionary is returned whenever the function :code:`get_data(ticker)`
-    is called on a scraper object. This data must always be complete. If it is
-    not the function returns :code:`None` instead of this dictionary.
+When a request is made to a scraper object provided by this project, a data 
+object corresponding to the requests purpose is returned. The objects do
+internally save the fetched data in attributes defined as slots. They can be
+accessed by calling <yourObject>.<attributeName>
 
-    Currently the following data is contained in the dictionary:
+Currently the following data classes are defined. If you don't find the data
+you require, put in an issue on this project's repository_ for it to be
+considered for inclusion with the next version release.
+
+- **TickerData**
+    A TickerData object is created and returned whenever the function
+    :code:`get_data(ticker)` is called on a scraper object. The fetched data 
+    must always include all of the fields provided by the TickerData object. If
+    it is not, the function returns :code:`None` instead of this dictionary.
+
+    Currently the following data is supported in the TickerData object:
 
 +-----------------+-----------------------------------------------------------------+
-| Key             | Value                                                           |
+| Attribute       | Value                                                           |
 +=================+=================================================================+
-| Currency        | Currency code representing the currency of ticker's price (e.g. |
+| currency        | Currency code representing the currency of ticker's price (e.g. |
 |                 | USD, EUR)                                                       |
 +-----------------+-----------------------------------------------------------------+
-| ETF             | Boolean indicating if the ticker belongs to an ETF_             |
+| etf             | Boolean indicating if the ticker belongs to an ETF_             |
 +-----------------+-----------------------------------------------------------------+
-| Price           | Price of one share of the holding represented by the ticker     |
+| name            | Name of the holding represented by the ticker                   |
 +-----------------+-----------------------------------------------------------------+
-| Security Name   | Name of the holding represented by the ticker                   |
+| price           | Price of one share of the holding represented by the ticker     |
 +-----------------+-----------------------------------------------------------------+
-| Source          | String representation of the data source (e.g. Yahoo)           |
+| source          | String representation of the data source (e.g. Yahoo)           |
 +-----------------+-----------------------------------------------------------------+
 
-- **Company Data**
-    This dictionary is returned when the function 
+- **CompanyData**
+    The CompanyData object is returned when the function 
     :code:`get_company_data(ticker)` is called. The data contained in the
-    dictionary needs to be complete. If it isn't the function will simply
-    return :code:`None`.
+    object's attributes needs to be complete in the fetched JSON. If it isn't 
+    the function will simply return :code:`None`.
 
-    Currently the dictionary contains the following data:
+    Currently the CompanyData object contains the following attributes:
 
 +-----------------+-----------------------------------------------------------------+
-| Key             | Value                                                           |
+| Attribute       | Value                                                           |
 +=================+=================================================================+
-| Company Name    | Name of the company represented by the ticker                   |
+| description     | Description of the company provided by the data source          |
 +-----------------+-----------------------------------------------------------------+
-| Description     | Description of the company provided by the data source          |
+| exchange        | Name of the exchange the ticker gets traded on (e.g. NasdaqGS)  |
 +-----------------+-----------------------------------------------------------------+
-| Exchange        | Name of the exchange the ticker gets traded on (e.g. NasdaqGS)  |
+| industry        | Industry the company is active in (e.g. Specialty Retail)       |
 +-----------------+-----------------------------------------------------------------+
-| Industry        | Industry the company is active in (e.g. Specialty Retail)       |
+| name            | Name of the company represented by the ticker                   |
 +-----------------+-----------------------------------------------------------------+
-| Sector          | Sector the company is associated with (e.g. Consumer Cyclical)  |
+| sector          | Sector the company is associated with (e.g. Consumer Cyclical)  |
 +-----------------+-----------------------------------------------------------------+
-| Symbol          | The ticker symbol                                               |
+| symbol          | The ticker symbol                                               |
 +-----------------+-----------------------------------------------------------------+
-| Website         | Company website as provided by the data source                  |
+| website         | Company website as provided by the data source                  |
 +-----------------+-----------------------------------------------------------------+
 
+.. _yahoo-scraper:
 
 YahooScraper
 ++++++++++++
@@ -112,15 +120,15 @@ holding_time=15* )
     - **get_data** ( *ticker* )
         Fetches data for the given *ticker* from the internal buffer or the 
         defined source. If data was retrieved it is saved in the internal
-        buffer and returned as the previously defined dictionary containing the
-        relevant portions of the recovered data. If the fetch was not 
-        successful returns :code:`None`.
+        buffer and returned as the previously defined TickerData object 
+        containing the relevant portions of the recovered data. If the fetch
+        was not successful returns :code:`None`.
     - **get_company_data** ( *ticker* )
         Fetches data for the given *ticker* from the internal buffer or the 
         defined source. If data was retrieved it is saved in the internal
-        buffer and returned as the previously defined dictionary containing the
-        relevant portions of the recovered data. If the fetch was not 
-        successful returns :code:`None`.
+        buffer and returned as the previously defined CompanyData object
+        containing the relevant portions of the recovered data. If the fetch
+        was not successful returns :code:`None`.
 
 Currency Converter
 ------------------
@@ -163,3 +171,4 @@ use_buffer=True, buffer_size=10, holding_time=1800* )
         most likely the case when *base_currency_code* is not valid)
 
 .. _ETF: https://www.investopedia.com/terms/e/etf.asp
+.. _repository: https://github.com/LukasBudach/FinanceScraper
