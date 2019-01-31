@@ -62,9 +62,9 @@ next major, minor and micro versions.
 ### Minor
 * [x] write the documentation more in depth
 * [x] make the documentation interactive
-* [ ] add more example code to show the intended usage
-* [ ] rethink the interface in terms of the returned data
-    * [ ] implement objects that get returned instead of dictionaries
+* [x] add more example code to show the intended usage
+* [x] rethink the interface in terms of the returned data
+    * [x] implement objects that get returned instead of dictionaries
     * [ ] update documentation considering the changes above
 
 ### Major
