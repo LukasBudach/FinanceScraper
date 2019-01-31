@@ -57,7 +57,8 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* no short term road map has been thought of yet
+* [ ] look into adding a FinanceScraperException class which can be used to throw helpful exceptions
+* [ ] adapt documentation to explain those exceptions
 
 ### Minor
 * [ ] introduce a second data source
@@ -67,6 +68,3 @@ and collects the result, returning the first result or None
 ### Major
 * look into performance improvements
 * as this will be 1.x.x should be well documented and very usable
-
-### ToDo without any specific version goal
-* add intelligent error types
