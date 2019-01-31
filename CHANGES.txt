@@ -13,3 +13,11 @@ v0.1.2 01/27/2019
 
 v0.1.3 01/27/2019
     -- use setuptools capabilities to find all necessary packages
+
+v0.2.0 01/31/2019
+    -- replace the returned dictionaries with purpose built objects
+    -- update documentation
+    -- add automated testing
+    -- add currency converter tests
+    -- update and improve example scripts
+    -- restructure project (folder structure)

@@ -57,15 +57,12 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* next progress should lead to minor version
+* no short term road map has been thought of yet
 
 ### Minor
-* [x] write the documentation more in depth
-* [x] make the documentation interactive
-* [x] add more example code to show the intended usage
-* [x] rethink the interface in terms of the returned data
-    * [x] implement objects that get returned instead of dictionaries
-    * [ ] update documentation considering the changes above
+* [ ] introduce a second data source
+* [ ] provide a class that forwards a request to multiple different scraper objects
+and collects the result, returning the first result or None
 
 ### Major
 * look into performance improvements
