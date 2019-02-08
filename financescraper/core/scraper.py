@@ -2,9 +2,16 @@ import requests
 import json
 import logging
 
+from enum import Enum
 from abc import ABC, abstractmethod
 
 from financescraper.datacontainer import circular_buffer, container
+
+
+class ScraperApproach(Enum):
+    FAST = 1
+    BALANCED = 2
+    THOROUGH = 3
 
 
 class Scraper(ABC):
@@ -200,12 +207,13 @@ class IEXScraper(Scraper):
 
 
 class FinanceScraper(Scraper):
-    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15, approach=ScraperApproach.BALANCED):
         super().__init__('General', use_buffer, buffer_size, holding_time)
         self.scraper = {
             '0': IEXScraper(use_buffer, buffer_size, holding_time),
             '1': YahooScraper(use_buffer, buffer_size, holding_time)
         }
+        self.approach = approach
 
     def __del__(self):
         self.scraper = None
@@ -213,17 +221,21 @@ class FinanceScraper(Scraper):
     def _fetch_data(self, ticker):
         raise(Exception('The FinanceScraper object is not meant to implement _fetch_data'))
 
-    def _save_result(self, val):
-        self.temp_data.append(val)
-
     # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):
         data_object = None
         loops = 0
 
-        while (data_object is None) and (loops < self.scraper.__len__()):
-            data_object = self.scraper.get(str(loops)).get_data(ticker)
-            loops += 1
+        if self.approach == ScraperApproach.FAST:
+            data_object = self.scraper.get(str(0)).get_data(ticker)
+        elif self.approach == ScraperApproach.BALANCED:
+            while (data_object is None) and (loops < self.scraper.__len__()):
+                data_object = self.scraper.get(str(loops)).get_data(ticker)
+                loops += 1
+        elif self.approach == ScraperApproach.THOROUGH:
+            while loops < self.scraper.__len__():
+                data_object = self.scraper.get(str(loops)).get_data(ticker)
+                loops += 1
 
         return data_object
 
@@ -232,8 +244,15 @@ class FinanceScraper(Scraper):
         data_object = None
         loops = 0
 
-        while (data_object is None) and (loops < self.scraper.__len__()):
-            data_object = self.scraper.get(str(loops)).get_company_data(ticker)
-            loops += 1
+        if self.approach == ScraperApproach.FAST:
+            data_object = self.scraper.get(str(0)).get_company_data(ticker)
+        elif self.approach == ScraperApproach.BALANCED:
+            while (data_object is None) and (loops < self.scraper.__len__()):
+                data_object = self.scraper.get(str(loops)).get_company_data(ticker)
+                loops += 1
+        elif self.approach == ScraperApproach.THOROUGH:
+            while loops < self.scraper.__len__():
+                data_object = self.scraper.get(str(loops)).get_company_data(ticker)
+                loops += 1
 
         return data_object
