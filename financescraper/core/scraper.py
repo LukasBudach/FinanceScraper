@@ -14,9 +14,9 @@ class Scraper(ABC):
         if source == 'Yahoo':
             self.url = 'https://finance.yahoo.com/quote/'
             self.session.get('https://finance.yahoo.com')
-        elif source == 'Google':
-            self.url = 'https://www.google.com/search?q='
-            self.session.get('https://www.google.com')
+        elif source == 'IEX':
+            self.url = 'https://api.iextrading.com/1.0/stock/'
+            self.session.get('https://api.iextrading.com/1.0/')
 
         self.use_buffer = use_buffer
 
@@ -42,7 +42,38 @@ class Scraper(ABC):
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
 
+    # internal function that either gets data from the buffer or starts the fetch
+    def _get_data_object(self, ticker):
+        if self.use_buffer:
+            data_object = self.buffer.get(ticker)
+        else:
+            data_object = None
+
+        if data_object is None:
+            data_object = self._fetch_data(ticker)
+        elif self.use_buffer:
+            self.buffer.refresh(ticker)
+
+        return data_object
+
     # internal function executing the html request for a given ticker
+    @abstractmethod
+    def _fetch_data(self, ticker):
+        pass
+
+    @abstractmethod
+    def get_data(self, ticker):
+        pass
+
+    @abstractmethod
+    def get_company_data(self, ticker):
+        pass
+
+
+class YahooScraper(Scraper):
+    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+        super().__init__('Yahoo', use_buffer, buffer_size, holding_time)
+
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker)
         if not (res.status_code == requests.codes.ok):
@@ -60,35 +91,11 @@ class Scraper(ABC):
         if self.use_buffer:
             self.buffer.add(ticker, data_object)
 
-        else:
-            if self.use_buffer:
-                self.buffer.refresh(ticker)
-
         return data_object
-
-    @abstractmethod
-    def get_data(self, ticker):
-        pass
-
-    @abstractmethod
-    def get_company_data(self, ticker):
-        pass
-
-
-class YahooScraper(Scraper):
-    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
-        super().__init__('Yahoo', use_buffer, buffer_size, holding_time)
 
     # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):
-        if self.use_buffer:
-            data_object = self.buffer.get(ticker)
-        else:
-            data_object = None
-
-        if data_object is None:
-            data_object = self._fetch_data(ticker)
-
+        data_object = self._get_data_object(ticker)
         if data_object is None:
             return None
 
@@ -108,14 +115,7 @@ class YahooScraper(Scraper):
 
     # returns a dictionary containing all relevant company data associated with a ticker
     def get_company_data(self, ticker):
-        if self.use_buffer:
-            data_object = self.buffer.get(ticker)
-        else:
-            data_object = None
-
-        if data_object is None:
-            data_object = self._fetch_data(ticker)
-
+        data_object = self._get_data_object(ticker)
         if data_object is None:
             return None
 
@@ -130,6 +130,65 @@ class YahooScraper(Scraper):
             data.sector = quote_summary['summaryProfile']['sector']
             data.symbol = ticker
             data.website = quote_summary['summaryProfile']['website']
+        except KeyError as e:
+            logging.warning("No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
+            return None
+
+        return data
+
+
+class IEXScraper(Scraper):
+    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+        super().__init__('IEX', use_buffer, buffer_size, holding_time)
+
+    def _fetch_data(self, ticker):
+        res = self.session.get(self.url + ticker + '/batch?types=quote,company')
+        if not (res.status_code == requests.codes.ok):
+            logging.error('Data fetching failed for ' + ticker)
+            return None
+
+        data_object = json.loads(res.text)
+
+        if self.use_buffer:
+            self.buffer.add(ticker, data_object)
+
+        return data_object
+
+    def get_data(self, ticker):
+        data_object = self._get_data_object(ticker)
+        if data_object is None:
+            return None
+
+        data = container.TickerData('IEX')
+
+        try:
+            quote = data_object['quote']
+            data.currency = 'USD'
+            data.etf = (data_object['company']['issueType'] == 'et')
+            data.name = quote['companyName']
+            data.price = quote['latestPrice']
+        except KeyError as e:
+            logging.warning("No valid data found for " + ticker + '. Missing key: ' + e.args[0])
+            return None
+
+        return data
+
+    def get_company_data(self, ticker):
+        data_object = self._get_data_object(ticker)
+        if data_object is None:
+            return None
+
+        data = container.CompanyData('IEX')
+
+        try:
+            company = data_object['company']
+            data.description = company['description']
+            data.exchange = company['exchange']
+            data.industry = company['industry']
+            data.name = company['companyName']
+            data.sector = company['sector']
+            data.symbol = ticker
+            data.website = company['website']
         except KeyError as e:
             logging.warning("No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
