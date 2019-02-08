@@ -57,13 +57,12 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* [ ] look into adding a FinanceScraperException class which can be used to throw helpful exceptions
-* [ ] adapt documentation to explain those exceptions
+* [ ] add google finance as data source
 
 ### Minor
 * [ ] introduce a second data source
 * [ ] provide a class that forwards a request to multiple different scraper objects
-and collects the result, returning the first result or None
+and collects the result, returning the first returned result or None
 
 ### Major
 * look into performance improvements
