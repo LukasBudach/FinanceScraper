@@ -17,6 +17,9 @@ class Scraper(ABC):
         elif source == 'IEX':
             self.url = 'https://api.iextrading.com/1.0/stock/'
             self.session.get('https://api.iextrading.com/1.0/')
+        elif source == 'General':
+            self.url = None
+            self.session = None
 
         self.use_buffer = use_buffer
 
@@ -77,7 +80,7 @@ class YahooScraper(Scraper):
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker)
         if not (res.status_code == requests.codes.ok):
-            logging.error('Data fetching failed for ' + ticker)
+            logging.error('[YahooScraper] Data fetching failed for ' + ticker)
             return None
 
         raw_data = res.text
@@ -108,7 +111,7 @@ class YahooScraper(Scraper):
             data.name = quote_summary['price']['longName']
             data.price = quote_summary['price']['regularMarketPrice']['raw']
         except KeyError as e:
-            logging.warning("No valid data found for " + ticker + '. Missing key: ' + e.args[0])
+            logging.warning("[YahooScraper] No valid data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
@@ -131,7 +134,7 @@ class YahooScraper(Scraper):
             data.symbol = ticker
             data.website = quote_summary['summaryProfile']['website']
         except KeyError as e:
-            logging.warning("No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
+            logging.warning("[YahooScraper] No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
@@ -144,7 +147,7 @@ class IEXScraper(Scraper):
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker + '/batch?types=quote,company')
         if not (res.status_code == requests.codes.ok):
-            logging.error('Data fetching failed for ' + ticker)
+            logging.error('[IEXScraper] Data fetching failed for ' + ticker)
             return None
 
         data_object = json.loads(res.text)
@@ -168,7 +171,7 @@ class IEXScraper(Scraper):
             data.name = quote['companyName']
             data.price = quote['latestPrice']
         except KeyError as e:
-            logging.warning("No valid data found for " + ticker + '. Missing key: ' + e.args[0])
+            logging.warning("[IEXScraper] No valid data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
@@ -190,7 +193,47 @@ class IEXScraper(Scraper):
             data.symbol = ticker
             data.website = company['website']
         except KeyError as e:
-            logging.warning("No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
+            logging.warning("[IEXScraper] No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
         return data
+
+
+class FinanceScraper(Scraper):
+    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+        super().__init__('General', use_buffer, buffer_size, holding_time)
+        self.scraper = {
+            '0': IEXScraper(use_buffer, buffer_size, holding_time),
+            '1': YahooScraper(use_buffer, buffer_size, holding_time)
+        }
+
+    def __del__(self):
+        self.scraper = None
+
+    def _fetch_data(self, ticker):
+        raise(Exception('The FinanceScraper object is not meant to implement _fetch_data'))
+
+    def _save_result(self, val):
+        self.temp_data.append(val)
+
+    # returns a dictionary containing all relevant financial data associated with a ticker
+    def get_data(self, ticker):
+        data_object = None
+        loops = 0
+
+        while (data_object is None) and (loops < self.scraper.__len__()):
+            data_object = self.scraper.get(str(loops)).get_data(ticker)
+            loops += 1
+
+        return data_object
+
+    # returns a dictionary containing all relevant company data associated with a ticker
+    def get_company_data(self, ticker):
+        data_object = None
+        loops = 0
+
+        while (data_object is None) and (loops < self.scraper.__len__()):
+            data_object = self.scraper.get(str(loops)).get_company_data(ticker)
+            loops += 1
+
+        return data_object
