@@ -2,15 +2,21 @@ import requests
 import json
 import logging
 
+from abc import ABC, abstractmethod
+
 from financescraper.datacontainer import circular_buffer, container
 
 
-class YahooScraper:
-    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+class Scraper(ABC):
+    def __init__(self, source, use_buffer, buffer_size, holding_time):
         # open a requests session for more efficient access behavior
         self.session = requests.Session()
-        self.url = 'https://finance.yahoo.com/quote/'
-        self.session.get('https://finance.yahoo.com')
+        if source == 'Yahoo':
+            self.url = 'https://finance.yahoo.com/quote/'
+            self.session.get('https://finance.yahoo.com')
+        elif source == 'Google':
+            self.url = 'https://www.google.com/search?q='
+            self.session.get('https://www.google.com')
 
         self.use_buffer = use_buffer
 
@@ -35,6 +41,43 @@ class YahooScraper:
     def set_holding_time(self, holding_time):
         if self.use_buffer:
             self.buffer.set_holding_time(holding_time)
+
+    # internal function executing the html request for a given ticker
+    def _fetch_data(self, ticker):
+        res = self.session.get(self.url + ticker)
+        if not (res.status_code == requests.codes.ok):
+            logging.error('Data fetching failed for ' + ticker)
+            return None
+
+        raw_data = res.text
+
+        object_start = raw_data.find("root.App.main") + 16
+        object_end = raw_data.find("</script>", object_start) - 12
+        data_json = raw_data[object_start: object_end]
+
+        data_object = json.loads(data_json)
+
+        if self.use_buffer:
+            self.buffer.add(ticker, data_object)
+
+        else:
+            if self.use_buffer:
+                self.buffer.refresh(ticker)
+
+        return data_object
+
+    @abstractmethod
+    def get_data(self, ticker):
+        pass
+
+    @abstractmethod
+    def get_company_data(self, ticker):
+        pass
+
+
+class YahooScraper(Scraper):
+    def __init__(self, use_buffer=True, buffer_size=10, holding_time=15):
+        super().__init__('Yahoo', use_buffer, buffer_size, holding_time)
 
     # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):
@@ -92,27 +135,3 @@ class YahooScraper:
             return None
 
         return data
-
-    # internal function executing the html request for a given ticker
-    def _fetch_data(self, ticker):
-        res = self.session.get(self.url + ticker)
-        if not (res.status_code == requests.codes.ok):
-            logging.error('Data fetching failed for ' + ticker)
-            return None
-
-        raw_data = res.text
-
-        object_start = raw_data.find("root.App.main") + 16
-        object_end = raw_data.find("</script>", object_start) - 12
-        data_json = raw_data[object_start: object_end]
-
-        data_object = json.loads(data_json)
-
-        if self.use_buffer:
-            self.buffer.add(ticker, data_object)
-
-        else:
-            if self.use_buffer:
-                self.buffer.refresh(ticker)
-
-        return data_object
