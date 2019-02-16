@@ -11,22 +11,11 @@ ticker = 'AMZN'
 for el in scraper:
     data = el.get_data(ticker)
 
-    print('\nFields of TickerData object:')
-    print('Currency: ' + data.currency)
-    print('is ETF:', data.etf)
-    print('Name: ' + data.name)
-    print('Price:', data.price)
-    print('Source: ' + data.source)
+    print('\nTickerData object:')
+    print(data)
 
     # this is a CompanyData object
     data = el.get_company_data(ticker)
 
-    print('\nFields of CompanyData object:')
-    print('Description: ' + data.description)
-    print('Exchange: ' + data.exchange)
-    print('Industry: ' + data.industry)
-    print('Name: ' + data.name)
-    print('Sector: ' + data.sector)
-    print('Source: ' + data.source)
-    print('Symbol: ' + data.symbol)
-    print('Website: ' + data.website)
+    print('\nCompanyData object:')
+    print(data)

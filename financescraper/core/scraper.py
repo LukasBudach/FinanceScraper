@@ -234,7 +234,8 @@ class FinanceScraper(Scraper):
                 loops += 1
         elif self.approach == ScraperApproach.THOROUGH:
             while loops < self.scraper.__len__():
-                data_object = self.scraper.get(str(loops)).get_data(ticker)
+                current = self.scraper.get(str(loops)).get_data(ticker)
+                data_object = current if data_object is None else data_object.merge(current)
                 loops += 1
 
         return data_object
