@@ -59,7 +59,8 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* [ ] add google finance as data source
+* [x] add abstract base class for scraper classes
+* [ ] add secondary data source
 
 ### Minor
 * [ ] introduce a second data source

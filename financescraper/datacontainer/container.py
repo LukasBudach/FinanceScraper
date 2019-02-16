@@ -14,6 +14,26 @@ class TickerData(object):
         self.price = 0.0
         self.source = source
 
+    # merge the other TickerData object into self and return self
+    def merge(self, other):
+        new_price_and_curr = other.currency != 'USD' and self.currency != other.currency
+        if new_price_and_curr:
+            self.currency = other.currency
+            self.price = other.price
+        self.etf = self.etf and other.etf
+        self.name = other.name if self.name == '' else self.name
+        if not self == self:
+            self.source = self.source + ' & ' + other.source
+        return self
+
+    def __eq__(self, other):
+        equality = True
+        equality = equality and (self.currency == other.currency)
+        equality = equality and (self.etf == other.etf)
+        equality = equality and (self.name == other.name)
+        equality = equality and (self.price == other.price)
+        equality = equality and (self.source == other.source)
+        return equality
 
 class CompanyData(object):
     __slots__ = (
