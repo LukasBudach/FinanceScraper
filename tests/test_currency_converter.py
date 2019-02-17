@@ -38,11 +38,11 @@ class TestCurrencyConverter(unittest.TestCase):
         self.test_converter_convert()
 
     def test_using_buffer(self):
-        start_time = time.time_ns()
+        start_time = time.time()
         self.usd_converter.convert('EUR', 1)
-        start_time_buffer = end_time = time.time_ns()
+        start_time_buffer = end_time = time.time()
         self.usd_converter.convert('EUR', 2)
-        end_time_buffer = time.time_ns()
+        end_time_buffer = time.time()
         self.assertTrue((end_time_buffer - start_time_buffer) < (end_time - start_time))
 
 
