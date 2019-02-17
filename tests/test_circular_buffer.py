@@ -118,6 +118,12 @@ class TestCircularBuffer(unittest.TestCase):
         self.assertDictEqual(self.buffer.dictionary, expected)
         self.assertNotEqual(self.buffer.dictionary, obj)
 
+    def test_old_data_delete(self):
+        self.buffer.add('A', 'Value')
+        self.assertIsNotNone(self.buffer.get('A'))
+        time.sleep(1)
+        self.assertIsNone(self.buffer.get('A'))
+
 
 if __name__ == '__main__':
     unittest.main()

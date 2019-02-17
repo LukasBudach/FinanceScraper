@@ -68,15 +68,17 @@ class Scraper(ABC):
 
     # internal function executing the html request for a given ticker
     @abstractmethod
-    def _fetch_data(self, ticker):
+    def _fetch_data(self, ticker):  # pragma: no cover
         pass
 
+    # interface method returning a TickerData object
     @abstractmethod
-    def get_data(self, ticker):
+    def get_data(self, ticker):  # pragma: no cover
         pass
 
+    # interface method returning a CompanyData object
     @abstractmethod
-    def get_company_data(self, ticker):
+    def get_company_data(self, ticker):  # pragma: no cover
         pass
 
 

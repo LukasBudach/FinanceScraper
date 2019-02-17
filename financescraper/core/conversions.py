@@ -43,7 +43,7 @@ class CurrencyConverter:
 
         if rate is None:
             res = self.yahoo_scraper.session.get(self.yahoo_scraper.url + base_curr + dest_curr + "=X")
-            if not (res.status_code == requests.codes.ok):
+            if not (res.status_code == requests.codes.ok):  # pragma: no cover
                 logging.error('Data fetching failed for conversion from ' + base_curr + ' to ' + dest_curr)
                 return None
 

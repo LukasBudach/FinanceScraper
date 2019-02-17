@@ -1,5 +1,6 @@
 import unittest
 import logging
+import time
 
 from financescraper import conversions, scraper
 
@@ -31,6 +32,18 @@ class TestCurrencyConverter(unittest.TestCase):
         self.assertEqual(self.usd_converter.convert('USD', 1), 1)
         self.assertEqual(type(self.usd_converter.convert('EUR', 1)), float)
         self.assertIsNone(self.usd_converter.convert('INVALID', 1))
+
+    def test_no_buffer(self):
+        self.usd_converter.use_buffer = False
+        self.test_converter_convert()
+
+    def test_using_buffer(self):
+        start_time = time.time_ns()
+        self.usd_converter.convert('EUR', 1)
+        start_time_buffer = end_time = time.time_ns()
+        self.usd_converter.convert('EUR', 2)
+        end_time_buffer = time.time_ns()
+        self.assertTrue((end_time_buffer - start_time_buffer) < (end_time - start_time))
 
 
 if __name__ == '__main__':

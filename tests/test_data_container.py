@@ -15,21 +15,21 @@ class TestTickerData(unittest.TestCase):
     def tearDown(self):
         logging.disable(logging.NOTSET)
 
-    def testEquals(self):
+    def test_equals(self):
         my_copy = copy.copy(self.example)
         self.assertTrue(self.example == my_copy)
         my_copy.name = 'Different Name'
         self.assertFalse(self.example == my_copy)
 
-    def testStr(self):
+    def test_str(self):
         expected = 'No name found: 29.99 USD from Yahoo || ETF: False'
         self.assertEqual(str(self.example), expected)
 
-    def testRepr(self):
+    def test_repr(self):
         expected = 'TickerData(USD, False, No name found, {}, Yahoo)'.format(29.99)
         self.assertEqual(repr(self.example), expected)
 
-    def testMergeKeepPrice(self):
+    def test_merge_keep_price(self):
         to_merge = container.TickerData('IEX')
         to_merge.price = 31.99
         to_merge.etf = True
@@ -43,7 +43,7 @@ class TestTickerData(unittest.TestCase):
         self.example.merge(to_merge)
         self.assertTrue(self.example == expected)
 
-    def testMergeChangePrice(self):
+    def test_merge_change_price(self):
         to_merge = container.TickerData('IEX')
         to_merge.price = 31.99
         to_merge.currency = 'EUR'
@@ -69,23 +69,23 @@ class TestCompanyData(unittest.TestCase):
     def tearDown(self):
         logging.disable(logging.NOTSET)
 
-    def testEquals(self):
+    def test_equals(self):
         my_copy = copy.copy(self.example)
         self.assertTrue(self.example == my_copy)
         my_copy.name = 'Different Company'
         self.assertFalse(self.example == my_copy)
 
-    def testStr(self):
+    def test_str(self):
         expected = 'ABC: No name found - No website found from Yahoo || sector: No sector found || industry: No ' \
                    'industry found || exchange: No exchange found || description: No description found'
         self.assertEqual(str(self.example), expected)
 
-    def testRepr(self):
+    def test_repr(self):
         expected = 'CompanyData(No description found, No exchange found, No industry found, No name found, No sector ' \
                    'found, Yahoo, ABC, No website found)'
         self.assertEqual(repr(self.example), expected)
 
-    def testMerge(self):
+    def test_merge(self):
         to_merge = container.CompanyData('IEX')
         to_merge.name = 'Alphabet Inc.'
         to_merge.description = 'A big corporation.'
@@ -97,3 +97,7 @@ class TestCompanyData(unittest.TestCase):
 
         self.example.merge(to_merge)
         self.assertTrue(self.example == expected)
+
+
+if __name__ == '__main__':
+    unittest.main()
