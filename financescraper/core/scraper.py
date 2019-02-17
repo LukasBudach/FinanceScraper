@@ -108,7 +108,7 @@ class YahooScraper(Scraper):
     # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):
         data_object = self._get_data_object(ticker)
-        if data_object is None:
+        if data_object is None:  # pragma: no cover
             return None
 
         data = container.TickerData('Yahoo')
@@ -128,7 +128,7 @@ class YahooScraper(Scraper):
     # returns a dictionary containing all relevant company data associated with a ticker
     def get_company_data(self, ticker):
         data_object = self._get_data_object(ticker)
-        if data_object is None:
+        if data_object is None:  # pragma: no cover
             return None
 
         data = container.CompanyData('Yahoo')

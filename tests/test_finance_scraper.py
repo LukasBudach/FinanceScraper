@@ -23,6 +23,10 @@ class TestFinanceScraper(unittest.TestCase):
         self.assertEqual(self.scraper.buffer.max_holding_time, 15)
         self.assertIsNone(self.scraper.url)
 
+    def test_fetch_data(self):
+        with self.assertRaises(Exception):
+            self.scraper._fetch_data(self.valid_ticker)
+
     def test_set_buffer_size(self):
         self.scraper.set_buffer_size(5)
         idx = 0
