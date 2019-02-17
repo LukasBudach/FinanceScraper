@@ -19,15 +19,15 @@ class DataObject(ABC):
         return equality
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         pass
 
     @abstractmethod
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         pass
 
     @abstractmethod
-    def merge(self, other):
+    def merge(self, other):  # pragma: no cover
         pass
 
 
@@ -45,10 +45,12 @@ class TickerData(DataObject):
         self.price = 0.0
 
     def __repr__(self):
-        return 'TickerData(%s, %r, %s, %f, %s)' % (self.currency, self.etf, self.name, self.price, self.source)
+        return 'TickerData({currency}, {etf}, {name}, {price}, {source})'.format(
+            currency=self.currency, etf=self.etf, name=self.name, price=self.price, source=self.source)
 
     def __str__(self):
-        return '%s: %f %s from %s || ETF: %r' % (self.name, self.price, self.currency, self.source, self.etf)
+        return '{name}: {price:.2f} {currency} from {source} || ETF: {etf}'.format(
+            name=self.name, price=self.price, currency=self.currency, source=self.source, etf=self.etf)
 
     # merge the other TickerData object into self and return self
     def merge(self, other):
@@ -84,14 +86,15 @@ class CompanyData(DataObject):
         self.website = 'No website found'
 
     def __repr__(self):
-        return 'CompanyData(%s, %s, %s, %s, %s, %s, %s, %s)' % (self.description, self.exchange, self.industry,
-                                                                self.name, self.sector, self.source, self.symbol,
-                                                                self.website)
+        return 'CompanyData({description}, {exchange}, {industry}, {name}, {sector}, {source}, {symbol}, {website})' \
+            .format(description=self.description, exchange=self.exchange, industry=self.industry, name=self.name,
+                    sector=self.sector, source=self.source, symbol=self.symbol, website=self.website)
 
     def __str__(self):
-        return '%s: %s - %s from %s || sector: %s || industry %s || exchange: %s || description: %s' % \
-               (self.symbol, self.name, self.website, self.source, self.sector, self.industry, self.exchange,
-                self.description)
+        return '{symbol}: {name} - {website} from {source} || sector: {sector} || industry: {industry} || exchange: ' \
+               '{exchange} || description: {description}'.format(
+                symbol=self.symbol, name=self.name, website=self.website, source=self.source, sector=self.sector,
+                industry=self.industry, exchange=self.exchange, description=self.description)
 
     # merge the other TickerData object into self and return self
     def merge(self, other):

@@ -21,6 +21,14 @@ class TestTickerData(unittest.TestCase):
         my_copy.name = 'Different Name'
         self.assertFalse(self.example == my_copy)
 
+    def testStr(self):
+        expected = 'No name found: 29.99 USD from Yahoo || ETF: False'
+        self.assertEqual(str(self.example), expected)
+
+    def testRepr(self):
+        expected = 'TickerData(USD, False, No name found, {}, Yahoo)'.format(29.99)
+        self.assertEqual(repr(self.example), expected)
+
     def testMergeKeepPrice(self):
         to_merge = container.TickerData('IEX')
         to_merge.price = 31.99
@@ -66,6 +74,16 @@ class TestCompanyData(unittest.TestCase):
         self.assertTrue(self.example == my_copy)
         my_copy.name = 'Different Company'
         self.assertFalse(self.example == my_copy)
+
+    def testStr(self):
+        expected = 'ABC: No name found - No website found from Yahoo || sector: No sector found || industry: No ' \
+                   'industry found || exchange: No exchange found || description: No description found'
+        self.assertEqual(str(self.example), expected)
+
+    def testRepr(self):
+        expected = 'CompanyData(No description found, No exchange found, No industry found, No name found, No sector ' \
+                   'found, Yahoo, ABC, No website found)'
+        self.assertEqual(repr(self.example), expected)
 
     def testMerge(self):
         to_merge = container.CompanyData('IEX')
