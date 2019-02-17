@@ -88,7 +88,7 @@ class YahooScraper(Scraper):
 
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker)
-        if not (res.status_code == requests.codes.ok):
+        if not (res.status_code == requests.codes.ok):  # pragma: no cover
             logging.error('[YahooScraper] Data fetching failed for ' + ticker)
             return None
 
@@ -155,7 +155,7 @@ class IEXScraper(Scraper):
 
     def _fetch_data(self, ticker):
         res = self.session.get(self.url + ticker + '/batch?types=quote,company')
-        if not (res.status_code == requests.codes.ok):
+        if not (res.status_code == requests.codes.ok):  # pragma: no cover
             logging.error('[IEXScraper] Data fetching failed for ' + ticker)
             return None
 
@@ -179,7 +179,7 @@ class IEXScraper(Scraper):
             data.etf = (data_object['company']['issueType'] == 'et')
             data.name = quote['companyName']
             data.price = quote['latestPrice']
-        except KeyError as e:
+        except KeyError as e:  # pragma: no cover
             logging.warning("[IEXScraper] No valid data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
@@ -201,7 +201,7 @@ class IEXScraper(Scraper):
             data.sector = company['sector']
             data.symbol = ticker
             data.website = company['website']
-        except KeyError as e:
+        except KeyError as e:  # pragma: no cover
             logging.warning("[IEXScraper] No valid company data found for " + ticker + '. Missing key: ' + e.args[0])
             return None
 
@@ -219,6 +219,23 @@ class FinanceScraper(Scraper):
 
     def __del__(self):
         self.scraper = None
+
+    def set_buffer_size(self, size):
+        super().set_buffer_size(size)
+        idx = 0
+        while idx < self.scraper.__len__():
+            self.scraper.get(str(idx)).set_buffer_size(size)
+            idx += 1
+
+    def set_holding_time(self, holding_time):
+        super().set_holding_time(holding_time)
+        idx = 0
+        while idx < self.scraper.__len__():
+            self.scraper.get(str(idx)).set_holding_time(holding_time)
+            idx += 1
+
+    def set_approach(self, approach):
+        self.approach = approach
 
     def _fetch_data(self, ticker):
         raise(Exception('The FinanceScraper object is not meant to implement _fetch_data'))
@@ -255,7 +272,8 @@ class FinanceScraper(Scraper):
                 loops += 1
         elif self.approach == ScraperApproach.THOROUGH:
             while loops < self.scraper.__len__():
-                data_object = self.scraper.get(str(loops)).get_company_data(ticker)
+                current = self.scraper.get(str(loops)).get_company_data(ticker)
+                data_object = current if data_object is None else data_object.merge(current)
                 loops += 1
 
         return data_object

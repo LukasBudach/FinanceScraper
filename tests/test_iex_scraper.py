@@ -37,7 +37,7 @@ class TestIEXScraper(unittest.TestCase):
 
         response = self.scraper.get_company_data(valid_ticker)
         self.assertIsNotNone(response)
-        self.assertNotEqual(response.name, '')
+        self.assertNotEqual(response.name, 'No name found')
         self.assertEqual(response.symbol, valid_ticker)
 
         response = self.scraper.get_company_data(invalid_ticker)
