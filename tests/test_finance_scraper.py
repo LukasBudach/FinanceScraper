@@ -27,6 +27,10 @@ class TestFinanceScraper(unittest.TestCase):
         with self.assertRaises(Exception):
             self.scraper._fetch_data(self.valid_ticker)
 
+    def test_close_connection(self):
+        with self.assertRaises(Exception):
+            self.scraper.close_connection()
+
     def test_set_buffer_size(self):
         self.scraper.set_buffer_size(5)
         idx = 0
@@ -57,7 +61,7 @@ class TestFinanceScraper(unittest.TestCase):
             start_slower = end_faster = time.time()
             self.scraper.scraper.get(str(idx + 1)).get_data(valid_ticker)
             end_slower = time.time()
-            self.assertTrue((end_faster - start_faster) < (end_slower - start_slower), 'Scraper at %d is slower than'
+            self.assertTrue((end_faster - start_faster) < (end_slower - start_slower), 'Scraper at %d is slower than '
                                                                                        'scraper at %d' % (idx, idx+1))
             idx += 1
 
