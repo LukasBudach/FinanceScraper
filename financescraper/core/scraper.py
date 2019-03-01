@@ -218,6 +218,8 @@ class FinanceScraper(Scraper):
         self.approach = approach
 
     def __del__(self):
+        for scraper in self.scraper:
+            del scraper
         self.scraper = None
 
     def set_buffer_size(self, size):
@@ -239,6 +241,9 @@ class FinanceScraper(Scraper):
 
     def _fetch_data(self, ticker):
         raise(Exception('The FinanceScraper object is not meant to implement _fetch_data'))
+
+    def close_connection(self):
+        raise(Exception('The FinanceScraper object does not hold an open requests Session object.'))
 
     # returns a dictionary containing all relevant financial data associated with a ticker
     def get_data(self, ticker):

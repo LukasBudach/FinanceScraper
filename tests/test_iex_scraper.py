@@ -26,7 +26,7 @@ class TestIEXScraper(unittest.TestCase):
         response = self.scraper.get_data(valid_ticker)
         self.assertIsNotNone(response)
         self.assertEqual(response.source, 'IEX')
-        self.assertEqual(type(response.price), float)
+        self.assertTrue((type(response.price) == float) or (type(response.price) == int))
 
         response = self.scraper.get_data(invalid_ticker)
         self.assertIsNone(response)

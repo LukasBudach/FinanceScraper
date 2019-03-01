@@ -27,7 +27,7 @@ It is **recommended to use this** if you just want to use the API, as it is the
 easiest and safest way to get the project.
 
 Get it for adaption within your project
----------------------------------
+---------------------------------------
 If you like the basic capabilities of this API, but are missing that one very
 specific thing that you need for usage in your own project, you should think
 about cloning the repository containing this project.

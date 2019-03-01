@@ -18,8 +18,18 @@ experience.
 
 Currently the following finance scraper classes are provided:
 
+:FinanceScraper:
+    | uses all other scraper classes in order to provide more complete data
+      faster than a single of the other scraper could
+:IEXScraper:
+    | provides data from from iextrading.com
+    | # stocks supported: **↓ ↓ -** speed of fetch: **↑ ↑ -**
+    | requirements: none
 :YahooScraper:
-    provides data from finance.yahoo.com
+    | provides data from finance.yahoo.com
+    | # stocks supported: **↑ ↑ ↑** speed of fetch: **↓ ↓ ↓**
+    | requirements: none
+(rating is **↑ ↑ ↑** best to **↓ ↓ ↓** worst)
 
 .. _ret-data-objects:
 
@@ -84,31 +94,47 @@ considered for inclusion with the next version release.
 | website         | Company website as provided by the data source                  |
 +-----------------+-----------------------------------------------------------------+
 
-.. _yahoo-scraper:
+.. _scraper-approach:
+ScraperApproach
++++++++++++++++
 
-YahooScraper
-++++++++++++
-    
-Provides an interface to collect data related to a ticker from Yahoo 
-Finance.
+Enum containing the values defined below. Used to pass the data fetching
+approach to those scraper classes that use more than one source for their data
+collection.
 
-financescraper.scraper.YahooScraper( *use_buffer=True, buffer_size=10, 
-holding_time=15* )
+Values:
+    - **FAST** = 1
+        This approach uses only the fastest possible data sources for the 
+        fetch. This may lead to less different tickers supported and thus
+        less complete data.
+    - **BALANCED** = 2
+        Using this approach all data sources are used from faster to slower
+        until data can be retrieved for the given ticker or all possibilities
+        are exhausted. The first data found is then returned for data recovery
+        of as many tickers as possible in as little time as possible.
+    - **THOROUGH** = 3
+        This approach is collecting data from all possible sources. If multiple
+        sources deliver information on one ticker the response objects are 
+        merged in order to deliver the most complete data possible. This is
+        the slowest approach.
 
-:Parameters:
-    - **use_buffer** 
-        Allow the scraper to hold an internal buffer saving 
-        data fetched previously for faster consecutive requests on the same ticker
-    - **buffer_size** 
-        Defines how many different tickers can be stored in the
-        buffer until the oldest are replaced with newer ones
-    - **holding_time** 
-        Defines how long data should be held in the internal
-        buffer in seconds before it is deemed out-of-date
+.. _scraper:
 
-:Functions:
+Scraper
++++++++
+
+Abstract base class (abc_) defining common methods and the interface for all
+scraper objects provided by the Finance Scraoer project. Cannot create an
+instance of this class!
+
+The interface defined by the Scraper base class can be used to make requests to
+any of the specific scrapers. The data will then be provided from the source
+used by this specific scraper as defined above. If an interface function is not
+to be used by one specific scraper an **exception will be thrown**.
+
+Interface:
     - **close_connection** ()
-        Closes the requests Session held by the YahooScraper object. The 
+        Closes the requests Session held by the Scraper object. Once closed the 
         Session *cannot be reopened!*
     - **set_buffer_size** ( *size* )
         Sets the maximum amount of unique tickers that can be held within the
@@ -129,6 +155,77 @@ holding_time=15* )
         buffer and returned as the previously defined CompanyData object
         containing the relevant portions of the recovered data. If the fetch
         was not successful returns :code:`None`.
+
+.. _yahoo-scraper:
+
+YahooScraper
+++++++++++++
+    
+Provides an interface to collect data related to a ticker from Yahoo 
+Finance.
+
+financescraper.scraper.YahooScraper( *use_buffer=True, buffer_size=10, 
+holding_time=15* )
+
+:Parameters:
+    - **use_buffer** 
+        Allow the scraper to hold an internal buffer saving data fetched
+        previously for faster consecutive requests on the same ticker
+    - **buffer_size** 
+        Defines how many different tickers can be stored in the
+        buffer until the oldest are replaced with newer ones
+    - **holding_time** 
+        Defines how long data should be held in the internal
+        buffer in seconds before it is deemed out-of-date
+
+.. _iex-scraper:
+
+IEXScraper
+++++++++++++
+    
+Provides an interface to collect data related to a ticker from the interface
+provided by iextrading.com
+
+financescraper.scraper.IEXScraper( *use_buffer=True, buffer_size=10, 
+holding_time=15* )
+
+:Parameters:
+    - **use_buffer** 
+        Allow the scraper to hold an internal buffer saving data fetched
+        previously for faster consecutive requests on the same ticker
+    - **buffer_size** 
+        Defines how many different tickers can be stored in the
+        buffer until the oldest are replaced with newer ones
+    - **holding_time** 
+        Defines how long data should be held in the internal
+        buffer in seconds before it is deemed out-of-date
+
+.. _finance-scraper:
+
+FinanceScraper
+++++++++++++
+    
+Provides an interface to collect data related to a ticker from all sources
+implemented with extra scraper classes to provide complete data as efficiently
+as possible.
+
+financescraper.scraper.FinanceScraper( *use_buffer=True, buffer_size=10, 
+holding_time=15, approach=ScraperApproach.BALANCED* )
+
+:Parameters:
+    - **use_buffer** 
+        Allow the scraper to hold an internal buffer saving data fetched
+        previously for faster consecutive requests on the same ticker
+    - **buffer_size** 
+        Defines how many different tickers can be stored in the
+        buffer until the oldest are replaced with newer ones
+    - **holding_time** 
+        Defines how long data should be held in the internal
+        buffer in seconds before it is deemed out-of-date
+    - **approach**
+        Can take any of the values defined by the previously shown 
+        ScraperApproach Enum in order to define how the FinanceScraper
+        should attempt to fetch the data corresponding to a given ticker.
 
 Currency Converter
 ------------------
@@ -172,3 +269,4 @@ use_buffer=True, buffer_size=10, holding_time=1800* )
 
 .. _ETF: https://www.investopedia.com/terms/e/etf.asp
 .. _repository: https://github.com/LukasBudach/FinanceScraper
+.. _abc: https://docs.python.org/3/library/abc.html

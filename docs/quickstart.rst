@@ -15,14 +15,16 @@ to make your requests. This object will internally keep a Session_ open, so for
 request efficiency it is recommended to keep your scraper object as long as you
 are planning to make requests to a specific source.
 
-Here is an example of how you would create the :ref:`yahoo-scraper` object and use it to
-fetch data for a specific ticker:
+Here is an example of how you would create the :ref:`finance-scraper` object - a
+scraper that combines multiple other ones to deliver results faster and more
+complete than a single scraper could - and use it to fetch data for a specific
+ticker:
 
 .. code-block:: Python
 
   from financescraper import scraper
-  yahoo_scraper = scraper.YahooScraper()
-  data = yahoo_scraper.get_data('AMZN')
+  my_scraper = scraper.FinanceScraper()
+  data = my_scraper.get_data('AMZN')
 
 The *get_data(ticker)* method will return a TickerData object if the data could
 be recovered for the ticker and **None** if not.
@@ -33,8 +35,8 @@ behind your ticker, you can do so by fetching the company data like so:
 .. code-block:: Python
 
   from financescraper import scraper
-  yahoo_scraper = scraper.YahooScraper()
-  data = yahoo_scraper.get_company_data('AMZN')
+  my_scraper = scraper.FinanceScraper()
+  data = my_scraper.get_company_data('AMZN')
 
 The *get_company_data(ticker)* method will return a CompanyData object if the
 data could be recovered for the ticker and **None** if not.
@@ -55,8 +57,8 @@ In order to use this feature you will have to know the currency codes (EUR for
 desired currency. If you know this you can create yourself a CurrencyConverter
 object and initialize it with your desired currency.
 
-As with the YahooScraper you are going to want to keep your Converter object
-as long as you need it, because it does use the YahooScraper internally which
+As with the FinanceScraper you are going to want to keep your Converter object
+as long as you need it, because it does use the :ref:`yahoo-scraper` internally which
 keeps a Session_ open for improved performance.
 
 Here is an example of how you would create the CurrencyConverter object to

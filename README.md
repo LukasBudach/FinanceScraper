@@ -60,11 +60,11 @@ next major, minor and micro versions.
 
 ### Micro
 * [x] add abstract base class for scraper classes
-* [ ] add secondary data source
+* [x] add secondary data source
 
 ### Minor
-* [ ] introduce a second data source
-* [ ] provide a class that forwards a request to multiple different scraper objects
+* [ ] introduce more data sources
+* [x] provide a class that forwards a request to multiple different scraper objects
 and collects the result, returning the first returned result or None
 
 ### Major
