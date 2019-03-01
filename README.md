@@ -35,9 +35,9 @@ jumping into FinanceScraper.
 * You want to write a little application for your **personal use only**. In this case
 the free plans of commercially available APIs are probably enough for you. Maybe take
 a look at [WorldTradingData](https://www.worldtradingdata.com/).
-* You need a lot of data very fast and have no means of parallelizing. In this case
-you will probably want to use one of the well established APIs, as this project is
-doing full HTML requests to ensure the most recent quotes possible. If you however
+* You need a lot of data very fast and have no means of parallel execution. In this 
+case you will probably want to use one of the well established APIs, as this project
+is doing full HTML requests to ensure the most recent quotes possible. If you however
 have a lot of rapid requests on the same data you may want to check out this
 projects data caching/buffering capabilities.
 
@@ -59,8 +59,7 @@ Now I also want to tell you about what I am planning to add to this project for 
 next major, minor and micro versions.
 
 ### Micro
-* [x] add abstract base class for scraper classes
-* [x] add secondary data source
+currently no clear goals for the next micro version
 
 ### Minor
 * [ ] introduce more data sources

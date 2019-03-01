@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='FinanceScraper',
-    version='0.2.0',
+    version='0.2.1',
     author='Lukas Budach',
     author_email='lukas.budach@student.hpi.de',
     description='An up-to-date web scraper providing financial data from various sources',

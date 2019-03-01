@@ -21,3 +21,10 @@ v0.2.0 01/31/2019
     -- add currency converter tests
     -- update and improve example scripts
     -- restructure project (folder structure)
+
+v0.2.1 03/01/2019
+    -- add a scraper accessing the IEX API
+    -- add an abstract base class for all scraper to ensure the interface
+    -- add a scraper that accesses all other scrapers using different approaches
+    -- add test coverage detection
+    -- update example scripts (full example now writes to a file)
